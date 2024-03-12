@@ -279,8 +279,10 @@
             addOrUpdateBuilding(data);
             if(data['id'] != ''){
                 alert("Cập nhật tòa nhà thành công!");
+                window.location.href = "/admin/building-list?message=success";
             }else{
                 alert("Thêm mới tòa nhà thành công!");
+                window.location.href = "/admin/building-list?message=success";
             }
         }else{
             window.location.href = "<c:url value="/admin/building-edit?typeCode=required&district=required"/>";

@@ -29,8 +29,6 @@ public class BuildingAPI {
     @Autowired
     private RentAreaRepository rentAreaRepository;
     @Autowired
-    private RentAreaService rentAreaService;
-    @Autowired
     private AssignBuildingRepository assignBuildingRepository;
     @Autowired
     private AssignmentBuildingService assignmentBuildingService;
@@ -38,15 +36,7 @@ public class BuildingAPI {
     @PostMapping
     public void addOrUpdateBuilding(@RequestBody BuildingDTO buildingDTO){
         //Xuong DB de update hoac them moi
-        BuildingEntity building = buildingService.createBuilding(buildingDTO);
-        buildingRepository.save(building);
-        if(buildingDTO.getId() != null){
-            rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
-        }
-        List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building,buildingDTO);
-        for(RentAreaEntity it : rentAreaEntities){
-            rentAreaRepository.save(it);
-        }
+        buildingService.createAndUpdateBuilding(buildingDTO);
     }
 
     @DeleteMapping("/{ids}")
@@ -65,10 +55,7 @@ public class BuildingAPI {
     @PostMapping("/assignment")
     public void updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO) {
         assignBuildingRepository.deleteByBuildingEntityId(assignmentBuildingDTO.getBuildingId());
-        List<AssignBuildingEntity> assignBuildingEntities = assignmentBuildingService.createAssignmentBuilding(assignmentBuildingDTO);
-        for(AssignBuildingEntity it : assignBuildingEntities){
-            assignBuildingRepository.save(it);
-        }
+        assignmentBuildingService.createAssignmentBuilding(assignmentBuildingDTO);
     }
 
 }

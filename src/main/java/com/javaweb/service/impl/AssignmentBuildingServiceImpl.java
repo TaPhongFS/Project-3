@@ -4,7 +4,9 @@ import com.javaweb.entity.AssignBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.AssignmentBuildingDTO;
+import com.javaweb.repository.AssignBuildingRepository;
 import com.javaweb.service.AssignmentBuildingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,8 +14,10 @@ import java.util.List;
 
 @Service
 public class AssignmentBuildingServiceImpl implements AssignmentBuildingService {
+    @Autowired
+    private AssignBuildingRepository assignBuildingRepository;
     @Override
-    public List<AssignBuildingEntity> createAssignmentBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
+    public void createAssignmentBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
         List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
         for(Long it : assignmentBuildingDTO.getStaffs()){
             AssignBuildingEntity assignBuilding = new AssignBuildingEntity();
@@ -25,7 +29,9 @@ public class AssignmentBuildingServiceImpl implements AssignmentBuildingService 
             assignBuilding.setBuildingEntity(buildingEntity);
             assignBuildingEntities.add(assignBuilding);
         }
+        for(AssignBuildingEntity it : assignBuildingEntities){
+            assignBuildingRepository.save(it);
+        }
 
-        return assignBuildingEntities;
     }
 }

@@ -5,6 +5,7 @@ import com.javaweb.converter.BuildingDTOConverter;
 import com.javaweb.converter.BuildingSearchResponseConverter;
 import com.javaweb.entity.AssignBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
+import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
@@ -12,8 +13,10 @@ import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
+import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.service.BuildingService;
+import com.javaweb.service.RentAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,10 @@ public class BuildingServiceImpl implements BuildingService {
     private BuildingDTOConverter buildingDTOConverter;
     @Autowired
     private BuildingConverter buildingConverter;
+    @Autowired
+    private RentAreaRepository rentAreaRepository;
+    @Autowired
+    private RentAreaService rentAreaService;
 
     @Override
     public List<BuildingSearchResponse> findAll(BuildingSearchRequest buildingSearchRequest) {
@@ -46,9 +53,16 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public BuildingEntity createBuilding(BuildingDTO buildingDTO) {
+    public void createAndUpdateBuilding(BuildingDTO buildingDTO) {
         BuildingEntity building = buildingDTOConverter.toBuildingEntity(buildingDTO);
-        return building;
+        buildingRepository.save(building);
+        if(buildingDTO.getId() != null){
+            rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
+        }
+        List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building,buildingDTO);
+        for(RentAreaEntity it : rentAreaEntities){
+            rentAreaRepository.save(it);
+        }
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface BuildingService {
 
     List<BuildingSearchResponse> findAll(BuildingSearchRequest buildingSearchRequest);
 
-    BuildingEntity createBuilding(BuildingDTO buildingDTO);
+    void createAndUpdateBuilding(BuildingDTO buildingDTO);
 
     BuildingDTO toBuildingDTO(BuildingEntity buildingEntity);
 }
