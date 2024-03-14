@@ -3,15 +3,11 @@ package com.javaweb.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "building")
-public class BuildingEntity extends BaseEntity{
+public class BuildingEntity extends BaseEntity {
     @Column(name = "name")
     private String name;
 
@@ -81,9 +77,20 @@ public class BuildingEntity extends BaseEntity{
     @OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY)
     private List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingEntity")
-    private List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "assignmentbuilding",
+            joinColumns = @JoinColumn(name = "buildingid", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "staffid", nullable = false))
+    private List<UserEntity> userEntities = new ArrayList<>();
 
+
+    public List<UserEntity> getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(List<UserEntity> userEntities) {
+        this.userEntities = userEntities;
+    }
 
     public Double getBrokerageFee() {
         return brokerageFee;
@@ -118,13 +125,6 @@ public class BuildingEntity extends BaseEntity{
         this.rentAreaEntities = rentAreaEntities;
     }
 
-    public List<AssignBuildingEntity> getAssignBuildingEntities() {
-        return assignBuildingEntities;
-    }
-
-    public void setAssignBuildingEntities(List<AssignBuildingEntity> assignBuildingEntities) {
-        this.assignBuildingEntities = assignBuildingEntities;
-    }
 
     public String getDistrict() {
         return district;

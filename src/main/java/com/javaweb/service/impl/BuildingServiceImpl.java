@@ -3,7 +3,6 @@ package com.javaweb.service.impl;
 import com.javaweb.converter.BuildingConverter;
 import com.javaweb.converter.BuildingDTOConverter;
 import com.javaweb.converter.BuildingSearchResponseConverter;
-import com.javaweb.entity.AssignBuildingEntity;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
@@ -56,11 +55,11 @@ public class BuildingServiceImpl implements BuildingService {
     public void createAndUpdateBuilding(BuildingDTO buildingDTO) {
         BuildingEntity building = buildingDTOConverter.toBuildingEntity(buildingDTO);
         buildingRepository.save(building);
-        if(buildingDTO.getId() != null){
+        if (buildingDTO.getId() != null) {
             rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
         }
-        List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building,buildingDTO);
-        for(RentAreaEntity it : rentAreaEntities){
+        List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building, buildingDTO);
+        for (RentAreaEntity it : rentAreaEntities) {
             rentAreaRepository.save(it);
         }
     }
@@ -75,20 +74,17 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public ResponseDTO listStaffs(Long buildingId) {
         BuildingEntity building = buildingRepository.findById(buildingId).get();
-        List<UserEntity> staffs = userRepository.findByStatusAndRoles_Code(1,"STAFF");
-        List<UserEntity> staffAssignment = new ArrayList<>();
-        for (AssignBuildingEntity it : building.getAssignBuildingEntities()){
-            staffAssignment.add(it.getUserEntity());
-        }
+        List<UserEntity> staffs = userRepository.findByStatusAndRoles_Code(1, "STAFF");
+        List<UserEntity> staffAssignment = building.getUserEntities();
         List<StaffResponseDTO> staffResponseDTOS = new ArrayList<>();
         ResponseDTO responseDTO = new ResponseDTO();
-        for (UserEntity it : staffs){
+        for (UserEntity it : staffs) {
             StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
             staffResponseDTO.setFullName(it.getFullName());
             staffResponseDTO.setStaffId(it.getId());
-            if (staffAssignment.contains(it)){
+            if (staffAssignment.contains(it)) {
                 staffResponseDTO.setChecked("checked");
-            }else {
+            } else {
                 staffResponseDTO.setChecked("");
             }
             staffResponseDTOS.add(staffResponseDTO);

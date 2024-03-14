@@ -1,8 +1,7 @@
 package com.javaweb.api.admin;
 
-import com.javaweb.entity.AssignBuildingEntity;
-import com.javaweb.entity.BuildingEntity;
-import com.javaweb.entity.RentAreaEntity;
+
+
 import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.ResponseDTO;
@@ -11,7 +10,6 @@ import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.service.AssignmentBuildingService;
 import com.javaweb.service.BuildingService;
-import com.javaweb.service.RentAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
