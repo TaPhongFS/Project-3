@@ -24,6 +24,8 @@ public class AbstractDTO<T> implements Serializable {
     private Integer totalItem;
     private String searchValue;
 
+
+
     public Long getId() {
         return id;
     }
