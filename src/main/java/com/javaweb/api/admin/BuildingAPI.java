@@ -5,16 +5,12 @@ package com.javaweb.api.admin;
 import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.ResponseDTO;
-import com.javaweb.repository.AssignBuildingRepository;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
-import com.javaweb.service.AssignmentBuildingService;
 import com.javaweb.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController(value = "buildingAPIOfAdmin")
 @RequestMapping ("/api/building")
@@ -26,10 +22,6 @@ public class BuildingAPI {
     private BuildingRepository buildingRepository;
     @Autowired
     private RentAreaRepository rentAreaRepository;
-    @Autowired
-    private AssignBuildingRepository assignBuildingRepository;
-    @Autowired
-    private AssignmentBuildingService assignmentBuildingService;
 
     @PostMapping
     public void addOrUpdateBuilding(@RequestBody BuildingDTO buildingDTO){
@@ -40,7 +32,6 @@ public class BuildingAPI {
     @DeleteMapping("/{ids}")
     public void deleteBuilding(@PathVariable Long[] ids){
         rentAreaRepository.deleteByBuildingEntityIdIn(ids);
-        assignBuildingRepository.deleteByBuildingEntityIdIn(ids);
         buildingRepository.deleteByIdIn(ids);
     }
 
@@ -52,8 +43,7 @@ public class BuildingAPI {
 
     @PostMapping("/assignment")
     public void updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO) {
-        assignBuildingRepository.deleteByBuildingEntityId(assignmentBuildingDTO.getBuildingId());
-        assignmentBuildingService.createAssignmentBuilding(assignmentBuildingDTO);
+        buildingService.asignmentBuilding(assignmentBuildingDTO);
     }
 
 }

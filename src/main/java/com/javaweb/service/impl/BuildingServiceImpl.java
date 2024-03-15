@@ -6,6 +6,7 @@ import com.javaweb.converter.BuildingSearchResponseConverter;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
@@ -16,6 +17,8 @@ import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.RentAreaService;
+import com.javaweb.utils.UploadFileUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,9 @@ public class BuildingServiceImpl implements BuildingService {
     private RentAreaRepository rentAreaRepository;
     @Autowired
     private RentAreaService rentAreaService;
+    @Autowired
+    private UploadFileUtils uploadFileUtils;
+
 
     @Override
     public List<BuildingSearchResponse> findAll(BuildingSearchRequest buildingSearchRequest) {
@@ -54,6 +60,7 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public void createAndUpdateBuilding(BuildingDTO buildingDTO) {
         BuildingEntity building = buildingDTOConverter.toBuildingEntity(buildingDTO);
+        saveThumbnail(buildingDTO, building);
         buildingRepository.save(building);
         if (buildingDTO.getId() != null) {
             rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
@@ -69,6 +76,13 @@ public class BuildingServiceImpl implements BuildingService {
         BuildingDTO buildingDTO = buildingConverter.toBuildingDTO(buildingEntity);
         return buildingDTO;
     }
+
+    @Override
+    public void asignmentBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
+       BuildingEntity building = buildingRepository.findById(assignmentBuildingDTO.getBuildingId()).get();
+       building.setUserEntities(userRepository.findByIdIn(assignmentBuildingDTO.getStaffs()));
+    }
+
 
 
     @Override
@@ -92,6 +106,16 @@ public class BuildingServiceImpl implements BuildingService {
         responseDTO.setData(staffResponseDTOS);
         responseDTO.setMessage("SUCCESS");
         return responseDTO;
+    }
+
+    private void saveThumbnail(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {
+        String path = "/building/" + buildingDTO.getImageName();
+        if (null != buildingDTO.getImageBase64()) {
+            String image = buildingDTO.getImageBase64().substring(buildingDTO.getImageBase64().indexOf(",") + 1);
+            byte[] bytes = Base64.decodeBase64(image.getBytes());
+            uploadFileUtils.writeOrUpdate(path, bytes);
+            buildingEntity.setImage(path);
+        }
     }
 
 

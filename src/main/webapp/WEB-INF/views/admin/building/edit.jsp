@@ -236,6 +236,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="col-sm-3 no-padding-right">Hình đại diện</label>
+                                    <form:hidden path="image"/>
+                                    <input class="col-sm-3 no-padding-right" type="file" id="uploadImage"/>
+                                    <div class="col-sm-6">
+                                        <c:set var="imagePath" value="/repository${buildingEdit.image}"/>
+                                        <img src="${imagePath}" id="viewImage" width="300px" height="300px"
+                                             style="margin-top: 50px">
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-xs-3"></label>
                                     <div class="col-xs-9">
                                         <c:if test="${not empty buildingEdit.id}">
@@ -263,6 +273,10 @@
 </div><!-- /.main-container -->
 
 <script>
+
+    var imageBase64 = '';
+    var imageName = '';
+
     $('#btnAddOrUpdateBuilding').click(function () {
         var data = {};
         var typeCode = [];
@@ -274,7 +288,14 @@
                 typeCode.push(v.value);
             }
         })
+
+        if ('' !== imageBase64) {
+            data['imageBase64'] = imageBase64;
+            data['imageName'] = imageName;
+        }
+
         data['typeCode'] = typeCode;
+
         if(typeCode != '' && data['district'] != ''){
             addOrUpdateBuilding(data);
             if(data['id'] != ''){
@@ -305,6 +326,27 @@
                 console.log(respond);
             }
         });
+    }
+
+    $('#uploadImage').change(function (event) {
+        var reader = new FileReader();
+        var file = $(this)[0].files[0];
+        reader.onload = function (e) {
+            imageBase64 = e.target.result;
+            imageName = file.name; // ten hinh khong dau, khoang cach. vd: a-b-c
+        };
+        reader.readAsDataURL(file);
+        openImage(this, "viewImage");
+    });
+
+    function openImage(input, imageView) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#' + imageView).attr('src', reader.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 
     $('#btnCancel').click(function () {

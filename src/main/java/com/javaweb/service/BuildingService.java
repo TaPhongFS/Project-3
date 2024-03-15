@@ -1,6 +1,7 @@
 package com.javaweb.service;
 
 import com.javaweb.entity.BuildingEntity;
+import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
@@ -17,4 +18,6 @@ public interface BuildingService {
     void createAndUpdateBuilding(BuildingDTO buildingDTO);
 
     BuildingDTO toBuildingDTO(BuildingEntity buildingEntity);
+
+    void asignmentBuilding(AssignmentBuildingDTO assignmentBuildingDTO);
 }
