@@ -1,4 +1,5 @@
 package com.javaweb.repository.custom.impl;
+
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import com.javaweb.entity.BuildingEntity;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,13 +23,17 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<BuildingEntity> findAll(BuildingSearchRequest buildingSearchBuilder) {
+    public List<BuildingEntity> findAll(BuildingSearchRequest buildingSearchBuilder, Pageable pageable) {
         StringBuilder sql = new StringBuilder("SELECT b.* FROM building b ");
         joinTable(buildingSearchBuilder, sql);
         StringBuilder where = new StringBuilder("WHERE 1 = 1 ");
         queryNomal(buildingSearchBuilder, where);
         querySpecial(buildingSearchBuilder, where);
         sql.append(where);
+        Query queryTotal = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
+        List<BuildingEntity> resultListTotal = queryTotal.getResultList();
+        buildingSearchBuilder.setTotalItems(resultListTotal.size());
+        sql.append(" LIMIT ").append(pageable.getPageSize()).append(" OFFSET ").append(pageable.getOffset());
         Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
         return query.getResultList();
     }
@@ -50,7 +58,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
                         if (item.getType().getName().equals("java.lang.Long")
                                 || item.getType().getName().equals("java.lang.Double")) {
                             where.append("AND b." + fieldName + " = " + value + " ");
-                        } else if(item.getType().getName().equals("java.lang.String") && value != "") {
+                        } else if (item.getType().getName().equals("java.lang.String") && value != "") {
                             where.append("AND b." + fieldName + " LIKE '%" + value + "%' ");
                         }
                     }
@@ -88,10 +96,10 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         }
         List<String> typeCode = buildingSearchBuilder.getTypeCode();
         if (typeCode != null) {
-            for(String it : typeCode) {
+            for (String it : typeCode) {
                 where.append("AND b.type LIKE '%" + it + "%' ");
             }
         }
-        where.append("GROUP BY b.id ORDER BY b.name ");
+        where.append("GROUP BY b.id ");
     }
 }

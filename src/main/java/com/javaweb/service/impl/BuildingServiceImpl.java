@@ -15,11 +15,14 @@ import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
+import com.javaweb.repository.custom.BuildingRepositoryCustom;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.RentAreaService;
 import com.javaweb.utils.UploadFileUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -45,12 +48,14 @@ public class BuildingServiceImpl implements BuildingService {
     private RentAreaService rentAreaService;
     @Autowired
     private UploadFileUtils uploadFileUtils;
+    @Autowired
+    private BuildingRepositoryCustom buildingRepositoryCustom;
 
     @Override
-    public List<BuildingSearchResponse> findAll(BuildingSearchRequest buildingSearchRequest) {
-        List<BuildingEntity> buildingEntities = buildingRepository.findAll(buildingSearchRequest);
+    public List<BuildingSearchResponse> findAll(BuildingSearchRequest buildingSearchRequest, Pageable pageable) {
+        List<BuildingEntity> buildings = buildingRepositoryCustom.findAll(buildingSearchRequest, pageable);
         List<BuildingSearchResponse> result = new ArrayList<>();
-        for (BuildingEntity item : buildingEntities) {
+        for (BuildingEntity item : buildings) {
             BuildingSearchResponse building = buildingSearchResponseConverter.toBuildingSearchResponse(item);
             result.add(building);
         }
