@@ -20,8 +20,6 @@ public class BuildingAPI {
     private BuildingService buildingService;
     @Autowired
     private BuildingRepository buildingRepository;
-    @Autowired
-    private RentAreaRepository rentAreaRepository;
 
     @PostMapping
     public void addOrUpdateBuilding(@RequestBody BuildingDTO buildingDTO){
@@ -31,7 +29,6 @@ public class BuildingAPI {
 
     @DeleteMapping("/{ids}")
     public void deleteBuilding(@PathVariable Long[] ids){
-        rentAreaRepository.deleteByBuildingEntityIdIn(ids);
         buildingRepository.deleteByIdIn(ids);
     }
 

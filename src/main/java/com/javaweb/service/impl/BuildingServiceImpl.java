@@ -62,14 +62,12 @@ public class BuildingServiceImpl implements BuildingService {
     public void createAndUpdateBuilding(BuildingDTO buildingDTO) {
         BuildingEntity building = buildingDTOConverter.toBuildingEntity(buildingDTO);
         saveThumbnail(buildingDTO, building);
-        buildingRepository.save(building);
         if (buildingDTO.getId() != null) {
             rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
         }
         List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building, buildingDTO);
-        for (RentAreaEntity it : rentAreaEntities) {
-            rentAreaRepository.save(it);
-        }
+        building.setRentAreaEntities(rentAreaEntities);
+        buildingRepository.save(building);
     }
 
     @Override
