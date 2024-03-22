@@ -77,7 +77,7 @@ public class BuildingEntity extends BaseEntity {
     private String image;
 
 
-    @OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "buildingEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

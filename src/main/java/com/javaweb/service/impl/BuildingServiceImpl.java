@@ -13,7 +13,6 @@ import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
-import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.service.BuildingService;
 import com.javaweb.service.RentAreaService;
@@ -40,8 +39,6 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private BuildingConverter buildingConverter;
     @Autowired
-    private RentAreaRepository rentAreaRepository;
-    @Autowired
     private RentAreaService rentAreaService;
     @Autowired
     private UploadFileUtils uploadFileUtils;
@@ -62,9 +59,6 @@ public class BuildingServiceImpl implements BuildingService {
     public void createAndUpdateBuilding(BuildingDTO buildingDTO) {
         BuildingEntity building = buildingDTOConverter.toBuildingEntity(buildingDTO);
         saveThumbnail(buildingDTO, building);
-        if (buildingDTO.getId() != null) {
-            rentAreaRepository.deleteByBuildingEntityId(buildingDTO.getId());
-        }
         List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building, buildingDTO);
         building.setRentAreaEntities(rentAreaEntities);
         buildingRepository.save(building);
