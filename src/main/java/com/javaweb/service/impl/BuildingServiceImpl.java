@@ -74,6 +74,7 @@ public class BuildingServiceImpl implements BuildingService {
     public void asignmentBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
         BuildingEntity building = buildingRepository.findById(assignmentBuildingDTO.getBuildingId()).get();
         building.setUserEntities(userRepository.findByIdIn(assignmentBuildingDTO.getStaffs()));
+        buildingRepository.save(building);
     }
 
 

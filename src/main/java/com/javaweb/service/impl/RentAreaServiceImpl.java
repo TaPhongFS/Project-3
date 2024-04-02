@@ -15,7 +15,7 @@ public class RentAreaServiceImpl implements RentAreaService {
     public List<RentAreaEntity> createRentArea(BuildingEntity buildingEntity, BuildingDTO buildingDTO) {
         List<RentAreaEntity> result = new ArrayList<>();
         if(buildingDTO.getRentArea() != "") {
-            String[] values = buildingDTO.getRentArea().split(",");
+            String[] values = buildingDTO.getRentArea().trim().split(",");
             for (String it : values) {
                 RentAreaEntity rentArea = new RentAreaEntity();
                 rentArea.setValue(it);
