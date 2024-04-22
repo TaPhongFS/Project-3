@@ -61,6 +61,10 @@ public class BuildingServiceImpl implements BuildingService {
         saveThumbnail(buildingDTO, building);
         List<RentAreaEntity> rentAreaEntities = rentAreaService.createRentArea(building, buildingDTO);
         building.setRentAreaEntities(rentAreaEntities);
+        if(building.getId() != null){
+            BuildingEntity buildingEntity = buildingRepository.findById(building.getId()).get();
+            building.setUserEntities(buildingEntity.getUserEntities());
+        }
         buildingRepository.save(building);
     }
 

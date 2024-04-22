@@ -367,10 +367,8 @@
             return $(this).val();
         }).get();
         data['staffs'] = staffs;
-        if (data['staffs'] != '') {
-            assignment(data);
-            alert("Giao thành công");
-        }
+        assignment(data);
+        alert("Giao thành công");
     })
 
     function assignment(data) {
